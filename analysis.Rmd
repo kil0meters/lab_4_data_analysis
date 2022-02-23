@@ -1,0 +1,51 @@
+---
+title: "Lab 4 Data Analysis"
+author: "Lab 4 Data Analysis Committee"
+date: "2/23/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+data <- read.csv("./data.csv")
+```
+
+```{r}
+force_areas <- function(positive_force, negative_force) {
+  i <- 1
+  for (i in 1:251) {
+    if (positive_force[i] < negative_force[i] && positive_force[i+3] < negative_force[i+3]) {
+      break;
+    }
+  }
+  positive_sum <- 0
+  negative_sum <- 0
+  
+  for (i in i:251) {
+    if (positive_force[i] > negative_force[i] && positive_force[i+3] > negative_force[i+3]) {
+      break;
+    }
+    positive_sum <- positive_sum + positive_force[i];
+    negative_sum <- negative_sum + negative_force[i];
+  }
+  positive_total_force <- positive_sum * 0.01
+  negative_total_force <- negative_sum * 0.01
+  
+  c(positive_total_force, negative_total_force)
+}
+```
+
+```{r}
+results <- data.frame()
+
+for (i in 6:11) {
+  x_name <- paste("Data.Set.", i, "..Force.G..N.", sep="")
+  y_name <- paste("Data.Set.", i, "..Force.Y..N.", sep="")
+  
+  m <- force_areas(data[, x_name], data[, y_name])
+  print(m)
+}
+```
