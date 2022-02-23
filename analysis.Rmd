@@ -16,21 +16,17 @@ data <- read.csv("./data.csv")
 ```{r}
 force_areas <- function(positive_force, negative_force) {
   i <- 1
-  for (i in 1:251) {
-    if (positive_force[i] < negative_force[i] && positive_force[i+3] < negative_force[i+3]) {
-      break;
-    }
-  }
   positive_sum <- 0
   negative_sum <- 0
   
-  for (i in i:251) {
-    if (positive_force[i] > negative_force[i] && positive_force[i+3] > negative_force[i+3]) {
-      break;
+  for (i in 1:251) {
+    if (positive_force[i] < negative_force[i]) {
+      positive_sum <- positive_sum + positive_force[i];
+      negative_sum <- negative_sum + negative_force[i];
     }
-    positive_sum <- positive_sum + positive_force[i];
-    negative_sum <- negative_sum + negative_force[i];
+    
   }
+  
   positive_total_force <- positive_sum * 0.01
   negative_total_force <- negative_sum * 0.01
   
@@ -41,7 +37,7 @@ force_areas <- function(positive_force, negative_force) {
 ```{r}
 results <- data.frame()
 
-for (i in 6:11) {
+for (i in 11:15) {
   x_name <- paste("Data.Set.", i, "..Force.G..N.", sep="")
   y_name <- paste("Data.Set.", i, "..Force.Y..N.", sep="")
   
