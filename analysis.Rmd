@@ -46,6 +46,7 @@ test_trial <- function(start, end, experiment) {
     m <- force_areas(data[, x_name], data[, y_name])
     results <- rbind(results, data.frame(force=m[1], car="Yellow Car", experiment))
     results <- rbind(results, data.frame(force=m[2], car="Blue Car", experiment))
+    results <- rbind(results, data.frame(force=m[2] + m[1], car="Absolute Difference", experiment))
   }
   
   results
@@ -55,16 +56,18 @@ test_trial <- function(start, end, experiment) {
 
 ```{r}
 calc_err <- function(data) {
-  yellow.car.force = data[data$car == "Yellow Car", "force"]
-  blue.car.force = data[data$car == "Blue Car", "force"]
+  y.force = data[data$car == "Yellow Car", "force"]
+  b.force = data[data$car == "Blue Car", "force"]
+  diff.force = y.force + b.force
   
-  yellow.car.abs.err <- (max(yellow.car.force) - min(yellow.car.force)) / 2
-  blue.car.abs.err <- (max(blue.car.force) - min(blue.car.force)) / 2
+  # We find the absolute error of the difference between the two forces
+  force.abs.err <- (max(diff.force) - min(diff.force)) / 2
   
-  yellow.car.rel.err <- yellow.car.abs.err / mean(yellow.car.force)
-  blue.car.rel.err <- blue.car.abs.err / mean(blue.car.force)
+  # Then we divide that by the average absolute force from the two force sensors
+  # to find the relative error
+  force.rel.err <- force.abs.err / mean(c(abs(y.force), abs(b.force)))
   
-  data.frame(yellow.car.abs.err, yellow.car.rel.err, blue.car.abs.err, blue.car.rel.err)
+  data.frame(force.abs.err, force.rel.err)
 }
 ```
 
