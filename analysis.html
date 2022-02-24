@@ -205,18 +205,21 @@ pre code {
   results
 }</code></pre>
 <pre class="r"><code>calc_err &lt;- function(data) {
-  yellow.car.err &lt;- (max(data$yellow.car) - min(data$yellow.car)) / 2
-  blue.car.err &lt;- (max(data$blue.car) - min(data$blue.car)) / 2
+  yellow.car.abs.err &lt;- (max(data$yellow.car) - min(data$yellow.car)) / 2
+  blue.car.abs.err &lt;- (max(data$blue.car) - min(data$blue.car)) / 2
   
-  data.frame(yellow.car.err, blue.car.err)
+  yellow.car.rel.err &lt;- yellow.car.abs.err / mean(data$yellow.car)
+  blue.car.rel.err &lt;- blue.car.abs.err / mean(data$blue.car)
+  
+  data.frame(yellow.car.abs.err, yellow.car.rel.err, blue.car.abs.err, blue.car.rel.err)
 }</code></pre>
 <div id="experiment-1" class="section level3">
 <h3>Experiment 1</h3>
 <p>Moving heavy car (yellow) colliding with moving light car (blue)</p>
 <pre class="r"><code>exp.1.data &lt;- test_trial(1,5)
 calc_err(exp.1.data)</code></pre>
-<pre><code>##   yellow.car.err blue.car.err
-## 1       0.127122    0.1309005</code></pre>
+<pre><code>##   yellow.car.abs.err yellow.car.rel.err blue.car.abs.err blue.car.rel.err
+## 1           0.127122         -0.3677023        0.1309005        0.3723988</code></pre>
 <pre class="r"><code>exp.1.data</code></pre>
 <pre><code>##   yellow.car  blue.car
 ## 1 -0.2164299 0.2173008
@@ -230,8 +233,8 @@ calc_err(exp.1.data)</code></pre>
 <p>Moving heavy car (yellow) colliding with stationary light car (blue)</p>
 <pre class="r"><code>exp.2.data &lt;- test_trial(6,10)
 calc_err(exp.2.data)</code></pre>
-<pre><code>##   yellow.car.err blue.car.err
-## 1       0.227273    0.2340386</code></pre>
+<pre><code>##   yellow.car.abs.err yellow.car.rel.err blue.car.abs.err blue.car.rel.err
+## 1           0.227273          -1.041397        0.2340386         1.050256</code></pre>
 <pre class="r"><code>exp.2.data</code></pre>
 <pre><code>##    yellow.car   blue.car
 ## 1 -0.43547108 0.44737086
@@ -245,8 +248,8 @@ calc_err(exp.2.data)</code></pre>
 <p>Moving light car (blue) colliding with stationary heavy car (yellow)</p>
 <pre class="r"><code>exp.3.data &lt;- test_trial(11,15)
 calc_err(exp.3.data)</code></pre>
-<pre><code>##   yellow.car.err blue.car.err
-## 1     0.05646756   0.06445723</code></pre>
+<pre><code>##   yellow.car.abs.err yellow.car.rel.err blue.car.abs.err blue.car.rel.err
+## 1         0.05646756         -0.5078896       0.06445723        0.5571992</code></pre>
 <pre class="r"><code>exp.3.data</code></pre>
 <pre><code>##    yellow.car   blue.car
 ## 1 -0.07155387 0.07034056
@@ -260,8 +263,8 @@ calc_err(exp.3.data)</code></pre>
 <p>Moving light car (yellow) colliding with moving light car (blue)</p>
 <pre class="r"><code>exp.4.data &lt;- test_trial(16,20)
 calc_err(exp.4.data)</code></pre>
-<pre><code>##   yellow.car.err blue.car.err
-## 1     0.00797837   0.01331345</code></pre>
+<pre><code>##   yellow.car.abs.err yellow.car.rel.err blue.car.abs.err blue.car.rel.err
+## 1         0.00797837        -0.04243804       0.01331345       0.07107249</code></pre>
 <pre class="r"><code>exp.4.data</code></pre>
 <pre><code>##   yellow.car  blue.car
 ## 1 -0.1953346 0.1992329

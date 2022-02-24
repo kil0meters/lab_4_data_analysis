@@ -36,7 +36,7 @@ force_areas <- function(positive_force, negative_force) {
 ```
 
 ```{r}
-test_trial <- function(start, end) {
+test_trial <- function(start, end, experiment) {
   results <- data.frame()
   
   for (i in start:end) {
@@ -44,7 +44,8 @@ test_trial <- function(start, end) {
     y_name <- paste("Data.Set.", i, "..Force.Y..N.", sep="")
     
     m <- force_areas(data[, x_name], data[, y_name])
-    results <- rbind(results, data.frame(yellow.car=m[1], blue.car=m[2]))
+    results <- rbind(results, data.frame(force=m[1], car="Yellow Car", experiment))
+    results <- rbind(results, data.frame(force=m[2], car="Blue Car", experiment))
   }
   
   results
@@ -54,10 +55,16 @@ test_trial <- function(start, end) {
 
 ```{r}
 calc_err <- function(data) {
-  yellow.car.err <- (max(data$yellow.car) - min(data$yellow.car)) / 2
-  blue.car.err <- (max(data$blue.car) - min(data$blue.car)) / 2
+  yellow.car.force = data[data$car == "Yellow Car", "force"]
+  blue.car.force = data[data$car == "Blue Car", "force"]
   
-  data.frame(yellow.car.err, blue.car.err)
+  yellow.car.abs.err <- (max(yellow.car.force) - min(yellow.car.force)) / 2
+  blue.car.abs.err <- (max(blue.car.force) - min(blue.car.force)) / 2
+  
+  yellow.car.rel.err <- yellow.car.abs.err / mean(yellow.car.force)
+  blue.car.rel.err <- blue.car.abs.err / mean(blue.car.force)
+  
+  data.frame(yellow.car.abs.err, yellow.car.rel.err, blue.car.abs.err, blue.car.rel.err)
 }
 ```
 
@@ -66,7 +73,7 @@ calc_err <- function(data) {
 Moving heavy car (yellow) colliding with moving light car (blue)
 
 ```{r}
-exp.1.data <- test_trial(1,5)
+exp.1.data <- test_trial(1,5, "Experiment 1")
 calc_err(exp.1.data)
 ```
 
@@ -79,7 +86,7 @@ exp.1.data
 Moving heavy car (yellow) colliding with stationary light car (blue)
 
 ```{r}
-exp.2.data <- test_trial(6,10)
+exp.2.data <- test_trial(6,10, "Experiment 2")
 calc_err(exp.2.data)
 ```
 
@@ -92,7 +99,7 @@ exp.2.data
 Moving light car (blue) colliding with stationary heavy car (yellow)
 
 ```{r}
-exp.3.data <- test_trial(11,15)
+exp.3.data <- test_trial(11,15, "Experiment 3")
 calc_err(exp.3.data)
 ```
 
@@ -105,10 +112,22 @@ exp.3.data
 Moving light car (yellow) colliding with moving light car (blue)
 
 ```{r}
-exp.4.data <- test_trial(16,20)
+exp.4.data <- test_trial(16,20, "Experiment 4")
 calc_err(exp.4.data)
 ```
 
 ```{r}
 exp.4.data
+```
+
+## Graph
+
+```{r}
+library(ggplot2)
+results <- rbind(exp.1.data, exp.2.data, exp.3.data, exp.4.data)
+
+ggplot(results, aes(x=factor(experiment), y=force, fill=factor(car))) +
+  geom_boxplot() +
+  labs(x="Experiment", y = "Total Force Measured (N)") +
+  guides(fill=guide_legend("Car"))
 ```
